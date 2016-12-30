@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  labels:
+    app: k8s-ingres-collector
+  name: k8s-ingress-collector-v2
+  namespace: sys
+spec:
+  template:
+    metadata:
+      labels:
+        app: k8s-ingress-collector
+    spec:
+      imagePullSecrets:
+        - name: bfd-docker-registry
+      hostNetwork: true
+      containers:
+      - name: k8s-ingress-collector-v2
+        image: yancey1989/k8s-ingress-collector
+        resources:
+          limits:
+            cpu: "1"
+            memory: "512Mi"
+          requests:
+            cpu: "1"
+            memory: "512Mi"
+        env:
+          - name: NGINX_HOST
+            value: "127.0.0.1"
+          - name: NGINX_PORT
+            value: "18080"
+          - name: INFLUX_DB_HOST
+            value: "10.100.0.28"
+          - name: INFLUX_DB_PORT
+            value: "8086"
+          - name: INFLUX_DB_NAME
+            value: "ingress"
+          - name: INTERVAL
+            value: "30"
+      nodeSelector:
+        role: ingress
